@@ -24,7 +24,7 @@ public class RecetteServlet extends HttpServlet {
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		List<Recette> recettes = recetteDao.getToutesLesRecettes();
-		System.out.println("Recettes dans le DAO : " + recettes.size());
+		//System.out.println("Recettes dans le DAO : " + recettes.size());
         request.setAttribute("recettes", recettes);
 		request.getRequestDispatcher("/WEB-INF/recette.jsp").forward(request, response);		}
 

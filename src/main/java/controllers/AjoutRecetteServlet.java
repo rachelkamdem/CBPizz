@@ -18,9 +18,15 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, maxFileSize = 1024 * 1024 * 10, maxRequestSize = 1024 * 1024 * 50)
 public class AjoutRecetteServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
+    private static final String ADMIN_PASSWORD = "admin12345";
+    //private static final String ADMIN_HASHED_PASSWORD = BCrypt.hashpw(ADMIN_PASSWORD, BCrypt.gensalt());
+    private static final String ADMIN_HASHED_PASSWORD = "$2a$10$ZREXHbAZiHmUnGk6iZD73Onj4FXmPMYydYsuNIh0W7PiObbnGvLYm";
+
 
     private RecetteDAOImpl recetteDao = new RecetteDAOImpl();
     private UtilisateurDAOImpl utilisateurDao = new UtilisateurDAOImpl();
@@ -51,12 +57,13 @@ public class AjoutRecetteServlet extends HttpServlet {
             Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("user");
             if (utilisateur == null) {
                 request.setAttribute("messageError", "Vous devez être connecté pour ajouter une recette.");
-                request.getRequestDispatcher("/WEB-INF/ajoutRecette.jsp").forward(request, response);
+                response.sendRedirect(request.getContextPath() + "/LoginServlet");
                 return;
             }
 
             // Créer le chemin pour enregistrer l'image dans le répertoire 'uploads'
             String uploadDirPath = getServletContext().getRealPath("/uploads");
+            String uploadDirPathReal = "/pizzaRecipe/images";
             File uploadDir = new File(uploadDirPath);
             if (!uploadDir.exists()) {
                 uploadDir.mkdirs();  // Créer le répertoire si nécessaire
@@ -76,10 +83,16 @@ public class AjoutRecetteServlet extends HttpServlet {
 
             // Ajouter la recette au DAO
             recetteDao.ajouterRecette(nouvelleRecette, utilisateurDao);
-
             // Redirection après ajout réussi
             request.setAttribute("messageSuccess", "Recette ajoutée avec succès !");
-            response.sendRedirect(request.getContextPath() + "/RecetteServlet");
+         // Vérification si c'est un administrateur
+            if (BCrypt.checkpw(utilisateur.getPassword(), ADMIN_HASHED_PASSWORD)) {   
+                response.sendRedirect("/pizzaRecipe/AdminServlet");  // Redirection vers la page admin
+            } else {
+                response.sendRedirect("/pizzaRecipe/UserServlet");  // Redirection vers la page utilisateur
+            }
+        
+           // response.sendRedirect(request.getContextPath() + "/RecetteServlet");
 
         } catch (Exception e) {
             // Gestion des erreurs lors de l'ajout de la recette

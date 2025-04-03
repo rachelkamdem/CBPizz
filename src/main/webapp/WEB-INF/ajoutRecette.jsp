@@ -224,27 +224,7 @@ body {
 	background-color: #2a012e;
 }
 
-.message-success {
-	margin-top: 20px;
-	padding: 10px 15px;
-	background-color: #d4edda;
-	color: #155724;
-	border-radius: 8px;
-	font-weight: bold;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	animation: fadeIn 0.5s ease-in;
-}
 
-.close-btn {
-	background: transparent;
-	border: none;
-	font-size: 1.2rem;
-	cursor: pointer;
-	color: #155724;
-	margin-left: 10px;
-}
 
 @
 keyframes fadeIn {from { opacity:0;
@@ -256,18 +236,56 @@ to {
 }
 
 }
-.message-error {
-	margin-top: 20px;
-	padding: 10px 15px;
-	background-color: #f8d7da;
-	color: #721c24;
-	border-radius: 8px;
-	font-weight: bold;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	animation: fadeIn 0.5s ease-in;
+.message-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    border-radius: 5px;
+    padding: 15px;
+    position: relative;
+    margin: 15px 0;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
+
+.message-success .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    color: #155724;
+    cursor: pointer;
+    outline: none;
+}
+
+.message-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
+    padding: 15px;
+    position: relative;
+    margin: 15px 0;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.message-error .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    color: #721c24;
+    cursor: pointer;
+    outline: none;
+}
+
 
 /* Responsive */
 @media ( max-width : 600px) {
@@ -603,23 +621,21 @@ translateY
 				</c:otherwise>
 			</c:choose>
 		</form>
-
-		<!-- Message de succès -->
-		<c:if test="${not empty messageSuccess}">
-			<div class="message-success">
-				${messageSuccess}
-				<button class="close-btn"
-					onclick="this.parentElement.style.display='none'">❌</button>
-			</div>
+		<!-- Message succes -->
+		<c:if test="${not empty sessionScope.messageSuccess}">
+		    <div class="alert alert-success alert-dismissible fade show" role="alert">
+		        <strong>Succès !</strong> ${sessionScope.messageSuccess}
+		        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		    </div>
+		    <c:remove var="messageSuccess" scope="session" />
 		</c:if>
-
 		<!-- Message d'erreur -->
-		<c:if test="${not empty messageError}">
-			<div class="message-error">
-				${messageError}
-				<button class="close-btn"
-					onclick="this.parentElement.style.display='none'">❌</button>
-			</div>
+		<c:if test="${not empty sessionScope.messageError}">
+		    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+		        <strong>Erreur :</strong> ${sessionScope.messageError}
+		        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		    </div>
+		    <c:remove var="messageError" scope="session" />
 		</c:if>
 	</section>
 
@@ -638,6 +654,26 @@ translateY
 
 
 	<script>
+	
+    // Disparition automatique après un délai
+    setTimeout(() => {
+        const messageDiv = document.querySelector('.message-error');
+        if (messageDiv) {
+            messageDiv.style.transition = "opacity 0.5s ease-out";
+            messageDiv.style.opacity = "0";
+            setTimeout(() => messageDiv.style.display = "none", 500); // Cache complètement après l'animation
+        }
+    }, 5000); // Le message disparaît après 5 secondes
+
+ // Ajoute un délai pour faire disparaître le message automatiquement
+    setTimeout(() => {
+        const messageDiv = document.querySelector('.message-success');
+        if (messageDiv) {
+            messageDiv.style.transition = "opacity 0.5s ease-out";
+            messageDiv.style.opacity = "0";
+            setTimeout(() => messageDiv.style.display = "none", 500); // Cache complètement après l'animation
+        }
+    }, 5000); // Le message disparaît après 5 secondes
 		let currentIndex = 0;
 		const slides = document.querySelectorAll('.carousel .slide');
 

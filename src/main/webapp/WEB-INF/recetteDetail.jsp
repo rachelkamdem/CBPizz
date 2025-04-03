@@ -358,7 +358,7 @@ to {
 					</p>
 					<!-- Ajout de l'auteur -->
 					<img
-						src="${pageContext.request.contextPath}/uploads/${recette.image}"
+						src="${pageContext.request.contextPath}/${recette.image}"
 						alt="${recette.nom}" class="img-principale">
 					<p class="intro">${recette.description}</p>
 				</div>

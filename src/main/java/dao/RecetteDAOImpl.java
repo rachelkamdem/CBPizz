@@ -142,12 +142,6 @@ public class RecetteDAOImpl {
         }
     }
 
-    
-    // Supprimer une recette par ID
-    public void supprimerRecettee(UUID id) {
-        recettes.removeIf(r -> r.getId().equals(id));
-        saveRecettes();
-    }
 
 }
 
